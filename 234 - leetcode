@@ -1,0 +1,62 @@
+Find Middle: Advance fast by 2 steps and slow by 1 step until fast reaches the end; slow lands at the midpoint.
+
+Reverse Second Half: Reverse the pointers in-place starting from slow to the end of the list.
+
+Compare Halves: Advance two pointers simultaneously—one from head and one from the reversed tail—and compare node values.
+
+Return Result: Return true if all values match; return false if any mismatch occurs.
+
+
+
+
+
+CODE:-
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if (!head || !head->next) return true;
+
+        // 1. Find the middle of the linked list
+        ListNode* slow = head;
+        ListNode* fast = head;
+        while (fast->next && fast->next->next) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        // 2. Reverse the second half of the list starting from slow->next
+        ListNode* secondHalfHead = reverseList(slow->next);
+
+        // 3. Compare the first half and the reversed second half
+        ListNode* firstHalf = head;
+        ListNode* secondHalf = secondHalfHead;
+        bool result = true;
+
+        while (secondHalf != nullptr) {
+            if (firstHalf->val != secondHalf->val) {
+                result = false;
+                break;
+            }
+            firstHalf = firstHalf->next;
+            secondHalf = secondHalf->next;
+        }
+
+        // 4. Restore the list back to its original state (good practice)
+        slow->next = reverseList(secondHalfHead);
+
+        return result;
+    }
+
+private:
+    ListNode* reverseList(ListNode* head) {
+        ListNode* prev = nullptr;
+        ListNode* curr = head;
+        while (curr != nullptr) {
+            ListNode* nextTemp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = nextTemp;
+        }
+        return prev;
+    }
+};
